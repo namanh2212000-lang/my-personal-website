@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Website Thủ Thuật</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body class="admin-dashboard">
+    <!-- Admin Header -->
+    <header class="admin-header">
+        <div class="container">
+            <nav class="admin-nav">
+                <h1>Admin Dashboard</h1>
+                <button onclick="logout()" class="logout-btn">Đăng xuất</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+        <div class="container">
+            <!-- Add New Post Section -->
+            <section class="admin-section">
+                <h2>Thêm bài viết mới</h2>
+                <form id="addPostForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="postTitle">Tiêu đề bài viết:</label>
+                            <input type="text" id="postTitle" name="title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="postCategory">Danh mục:</label>
+                            <select id="postCategory" name="category" required>
+                                <option value="">Chọn danh mục</option>
+                                <option value="google-one">Google One</option>
+                                <option value="nigeria">Nigeria</option>
+                                <option value="edu">EDU</option>
+                                <option value="the-ao">Thẻ ảo</option>
+                                <option value="vpn-proxy">VPN Proxy</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="postContent">Nội dung:</label>
+                        <textarea id="postContent" name="content" required placeholder="Nhập nội dung bài viết..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Thêm bài viết</button>
+                </form>
+                <div id="success-message" class="success-message" style="display: none;">
+                    Bài viết đã được thêm thành công!
+                </div>
+            </section>
+
+            <!-- Manage Posts Section -->
+            <section class="admin-section">
+                <h2>Quản lý bài viết</h2>
+                <div id="posts-list">
+                    <table class="posts-table">
+                        <thead>
+                            <tr>
+                                <th>Tiêu đề</th>
+                                <th>Danh mục</th>
+                                <th>Ngày tạo</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="posts-tbody">
+                            <!-- Posts will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="../js/auth.js"></script>
+    <script src="../js/posts.js"></script>
+    <script src="admin.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+        
+        // Load existing posts
+        loadAllPosts();
+        
+        // Add post form handler
+        document.getElementById('addPostForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const post = {
+                id: Date.now().toString(),
+                title: formData.get('title'),
+                category: formData.get('category'),
+                content: formData.get('content'),
+                date: new Date().toISOString(),
+                author: 'Admin'
+            };
+            
+            addPost(post);
+            this.reset();
+            
+            // Show success message
+            const successMsg = document.getElementById('success-message');
+            successMsg.style.display = 'block';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+            
+            loadAllPosts(); // Reload posts list
+        });
+    </script>
+</body>
+</html>
