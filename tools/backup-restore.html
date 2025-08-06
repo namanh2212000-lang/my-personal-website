@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Quản lý dữ liệu Website</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .tool-section {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .tool-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover { background: #5a6bd8; }
+        .danger { background: #e74c3c !important; }
+        .danger:hover { background: #c0392b !important; }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .stats {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Quản lý dữ liệu Website Thủ thuật</h1>
+    
+    <!-- Stats Section -->
+    <div class="tool-section">
+        <h2>📊 Thống kê hiện tại</h2>
+        <div id="stats" class="stats">
+            <p>Đang tải thống kê...</p>
+        </div>
+        <button onclick="loadStats()">🔄 Làm mới thống kê</button>
+    </div>
+
+    <!-- Add Post Section -->
+    <div class="tool-section">
+        <h2>📝 Thêm bài viết mới</h2>
+        <form id="addPostForm">
+            <div class="form-group">
+                <label for="postTitle">Tiêu đề:</label>
+                <input type="text" id="postTitle" required>
+            </div>
+            <div class="form-group">
+                <label for="postCategory">Danh mục:</label>
+                <select id="postCategory" required>
+                    <option value="">Chọn danh mục</option>
+                    <option value="google-one">Google One</option>
+                    <option value="nigeria">Nigeria</option>
+                    <option value="edu">EDU</option>
+                    <option value="the-ao">Thẻ ảo</option>
+                    <option value="vpn-proxy">VPN Proxy</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="postContent">Nội dung:</label>
+                <textarea id="postContent" rows="6" required></textarea>
+            </div>
+            <button type="submit">➕ Thêm bài viết</button>
+        </form>
+    </div>
+
+    <!-- Manage Posts Section -->
+    <div class="tool-section">
+        <h2>📋 Quản lý bài viết</h2>
+        <div id="posts-list">
+            <p>Đang tải danh sách bài viết...</p>
+        </div>
+        <button onclick="loadAllPosts()">🔄 Làm mới danh sách</button>
+    </div>
+
+    <!-- Backup/Restore Section -->
+    <div class="tool-section">
+        <h2>💾 Backup & Restore</h2>
+        
+        <h3>🔽 Export dữ liệu:</h3>
+        <button onclick="exportToFile()">📁 Tải xuống JSON</button>
+        <button onclick="exportToClipboard()">📋 Copy JSON</button>
+        
+        <h3>🔼 Import dữ liệu:</h3>
+        <input type="file" id="importFile" accept=".json">
+        <button onclick="importFromFile()">📂 Tải lên JSON</button>
+        
+        <h3>📄 Dữ liệu JSON:</h3>
+        <textarea id="jsonData" placeholder="Dữ liệu JSON hiện tại hoặc để import..."></textarea>
+        <button onclick="showCurrentData()">👁️ Hiện dữ liệu hiện tại</button>
+        <button onclick="importFromTextarea()">⬆️ Import từ textarea</button>
+        <button onclick="clearAllData()" class="danger">🗑️ Xóa tất cả dữ liệu</button>
+    </div>
+
+    <!-- Instructions -->
+    <div class="tool-section">
+        <h2>📖 Hướng dẫn sử dụng</h2>
+        <ol>
+            <li><strong>Thêm bài viết:</strong> Sử dụng form "Thêm bài viết mới" ở trên</li>
+            <li><strong>Backup:</strong> Click "Tải xuống JSON" để backup dữ liệu về máy</li>
+            <li><strong>Push lên Git:</strong> Sau khi hoàn tất, chạy lệnh git push</li>
+            <li><strong>Test trên VPS:</strong> Truy cập website để test</li>
+            <li><strong>Restore:</strong> Khi cần, sử dụng "Tải lên JSON" để khôi phục</li>
+        </ol>
+        
+        <h3>🚀 Quy trình làm việc:</h3>
+        <pre style="background: #f8f9fa; padding: 10px; border-radius: 5px;">
+1. Mở file này trên máy local
+2. Thêm/sửa bài viết 
+3. Backup dữ liệu
+4. Git add . && git commit && git push
+5. Chạy ~/git-update.sh trên VPS
+6. Test trên http://134.185.93.242
+        </pre>
+    </div>
+
+    <script>
+        // Load required functions
+        const LOCAL_STORAGE_KEY = 'website_posts';
+
+        // Stats functions
+        function loadStats() {
+            const posts = getPosts();
+            const stats = {
+                total: posts.length,
+                byCategory: {}
+            };
+            
+            posts.forEach(post => {
+                if (!stats.byCategory[post.category]) {
+                    stats.byCategory[post.category] = 0;
+                }
+                stats.byCategory[post.category]++;
+            });
+
+            const statsHtml = `
+                <p><strong>📊 Tổng số bài viết:</strong> ${stats.total}</p>
+                <p><strong>📈 Theo danh mục:</strong></p>
+                <ul>
+                    ${Object.entries(stats.byCategory).map(([cat, count]) => 
+                        `<li>${getCategoryName(cat)}: ${count} bài</li>`
+                    ).join('')}
+                </ul>
+                <p><em>Cập nhật: ${new Date().toLocaleString('vi-VN')}</em></p>
+            `;
+            
+            document.getElementById('stats').innerHTML = statsHtml;
+        }
+
+        // Post management functions  
+        function getPosts() {
+            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '[]');
+        }
+
+        function savePosts(posts) {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(posts));
+            loadStats(); // Auto refresh stats
+            loadAllPosts(); // Auto refresh list
+        }
+
+        function addPost(post) {
+            const posts = getPosts();
+            post.id = Date.now().toString();
+            post.date = new Date().toISOString();
+            post.author = 'Admin';
+            posts.unshift(post);
+            savePosts(posts);
+        }
+
+        function deletePost(postId) {
+            if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
+                const posts = getPosts().filter(post => post.id !== postId);
+                savePosts(posts);
+            }
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'google-one': 'Google One',
+                'nigeria': 'Nigeria',
+                'edu': 'EDU',
+                'the-ao': 'Thẻ ảo',
+                'vpn-proxy': 'VPN Proxy'
+            };
+            return categories[category] || category;
+        }
+
+        // Form handling
+        document.getElementById('addPostForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const post = {
+                title: formData.get('title'),
+                category: formData.get('category'),
+                content: formData.get('content')
+            };
+            addPost(post);
+            this.reset();
+            alert('✅ Thêm bài viết thành công!');
+        });
+
+        // Load all posts for management
+        function loadAllPosts() {
+            const posts = getPosts();
+            const container = document.getElementById('posts-list');
+            
+            if (posts.length === 0) {
+                container.innerHTML = '<p>Chưa có bài viết nào.</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8f9fa;">
+                            <th style="padding: 10px; border: 1px solid #ddd;">Tiêu đề</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Danh mục</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Ngày</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${posts.map(post => `
+                            <tr>
+                                <td style="padding: 8px; border: 1px solid #ddd;">${post.title}</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">${getCategoryName(post.category)}</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">${new Date(post.date).toLocaleDateString('vi-VN')}</td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    <button onclick="deletePost('${post.id}')" class="danger" style="padding: 5px 10px; font-size: 12px;">Xóa</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Backup/Restore functions
+        function exportToFile() {
+            const posts = getPosts();
+            const data = {
+                posts: posts,
+                exportDate: new Date().toISOString(),
+                totalPosts: posts.length
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `website-posts-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            alert('✅ Đã tải xuống file backup!');
+        }
+
+        function exportToClipboard() {
+            const posts = getPosts();
+            const data = {
+                posts: posts,
+                exportDate: new Date().toISOString(),
+                totalPosts: posts.length
+            };
+            
+            navigator.clipboard.writeText(JSON.stringify(data, null, 2))
+                .then(() => alert('✅ Đã copy JSON vào clipboard!'))
+                .catch(() => {
+                    // Fallback
+                    document.getElementById('jsonData').value = JSON.stringify(data, null, 2);
+                    alert('✅ Dữ liệu đã hiển thị trong textarea!');
+                });
+        }
+
+        function showCurrentData() {
+            const posts = getPosts();
+            const data = {
+                posts: posts,
+                viewDate: new Date().toISOString(),
+                totalPosts: posts.length
+            };
+            document.getElementById('jsonData').value = JSON.stringify(data, null, 2);
+        }
+
+        function importFromFile() {
+            const fileInput = document.getElementById('importFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Vui lòng chọn file JSON để import!');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const posts = data.posts || data; // Support both formats
+                    savePosts(posts);
+                    alert(`✅ Import thành công ${posts.length} bài viết!`);
+                } catch (error) {
+                    alert('❌ File không hợp lệ! Vui lòng chọn file JSON đúng định dạng.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function importFromTextarea() {
+            const jsonText = document.getElementById('jsonData').value.trim();
+            if (!jsonText) {
+                alert('Vui lòng nhập dữ liệu JSON vào textarea!');
+                return;
+            }
+            
+            try {
+                const data = JSON.parse(jsonText);
+                const posts = data.posts || data; // Support both formats
+                savePosts(posts);
+                alert(`✅ Import thành công ${posts.length} bài viết!`);
+            } catch (error) {
+                alert('❌ Dữ liệu JSON không hợp lệ!');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('⚠️ Bạn có chắc chắn muốn xóa TẤT CẢ dữ liệu?\n\nHành động này không thể hoàn tác!')) {
+                if (confirm('🚨 Xác nhận lần cuối: XÓA TẤT CẢ dữ liệu?')) {
+                    localStorage.removeItem(LOCAL_STORAGE_KEY);
+                    loadStats();
+                    loadAllPosts();
+                    document.getElementById('jsonData').value = '';
+                    alert('🗑️ Đã xóa tất cả dữ liệu!');
+                }
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            loadStats();
+            loadAllPosts();
+        });
+    </script>
+</body>
+</html>
