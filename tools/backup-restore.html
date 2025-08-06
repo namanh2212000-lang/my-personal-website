@@ -83,27 +83,28 @@
     <div class="tool-section">
         <h2>📝 Thêm bài viết mới</h2>
         <form id="addPostForm">
-            <div class="form-group">
-                <label for="postTitle">Tiêu đề:</label>
-                <input type="text" id="postTitle" required>
-            </div>
-            <div class="form-group">
-                <label for="postCategory">Danh mục:</label>
-                <select id="postCategory" required>
-                    <option value="">Chọn danh mục</option>
-                    <option value="google-one">Google One</option>
-                    <option value="nigeria">Nigeria</option>
-                    <option value="edu">EDU</option>
-                    <option value="the-ao">Thẻ ảo</option>
-                    <option value="vpn-proxy">VPN Proxy</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="postContent">Nội dung:</label>
-                <textarea id="postContent" rows="6" required></textarea>
-            </div>
-            <button type="submit">➕ Thêm bài viết</button>
-        </form>
+    <div class="form-group">
+        <label for="postTitle">Tiêu đề:</label>
+        <input type="text" id="postTitle" name="title" required>
+    </div>
+    <div class="form-group">
+        <label for="postCategory">Danh mục:</label>
+        <select id="postCategory" name="category" required>
+            <option value="">Chọn danh mục</option>
+            <option value="google-one">Google One</option>
+            <option value="nigeria">Nigeria</option>
+            <option value="edu">EDU</option>
+            <option value="the-ao">Thẻ ảo</option>
+            <option value="vpn-proxy">VPN Proxy</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="postContent">Nội dung:</label>
+        <textarea id="postContent" name="content" rows="6" required></textarea>
+    </div>
+    <button type="submit">➕ Thêm bài viết</button>
+</form>
+
     </div>
 
     <!-- Manage Posts Section -->
@@ -201,13 +202,26 @@
         }
 
         function addPost(post) {
-            const posts = getPosts();
-            post.id = Date.now().toString();
-            post.date = new Date().toISOString();
-            post.author = 'Admin';
-            posts.unshift(post);
-            savePosts(posts);
-        }
+    const posts = getPosts();
+    
+    // Tạo post object với đầy đủ thông tin
+    const newPost = {
+        id: Date.now().toString(),
+        title: post.title || 'Untitled',
+        category: post.category || 'uncategorized',
+        content: post.content || 'No content',
+        date: new Date().toISOString(),
+        author: 'Admin'
+    };
+    
+    console.log('New post created:', newPost); // Debug log
+    
+    posts.unshift(newPost); // Add to beginning
+    savePosts(posts);
+    
+    console.log('Total posts after adding:', posts.length); // Debug log
+}
+
 
         function deletePost(postId) {
             if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
@@ -229,17 +243,31 @@
 
         // Form handling
         document.getElementById('addPostForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const post = {
-                title: formData.get('title'),
-                category: formData.get('category'),
-                content: formData.get('content')
-            };
-            addPost(post);
-            this.reset();
-            alert('✅ Thêm bài viết thành công!');
-        });
+    e.preventDefault();
+    
+    // Lấy dữ liệu trực tiếp từ elements thay vì FormData
+    const title = document.getElementById('postTitle').value.trim();
+    const category = document.getElementById('postCategory').value;
+    const content = document.getElementById('postContent').value.trim();
+    
+    // Validate dữ liệu
+    if (!title || !category || !content) {
+        alert('❌ Vui lòng điền đầy đủ tất cả thông tin!');
+        return;
+    }
+    
+    const post = {
+        title: title,
+        category: category,
+        content: content
+    };
+    
+    console.log('Adding post:', post); // Debug log
+    
+    addPost(post);
+    this.reset();
+    alert('✅ Thêm bài viết thành công!');
+});
 
         // Load all posts for management
         function loadAllPosts() {
