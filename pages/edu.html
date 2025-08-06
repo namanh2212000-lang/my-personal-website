@@ -102,13 +102,68 @@
         </div>
     </footer>
 
-    <script src="../js/script.js"></script>
-    <script src="../js/posts.js"></script>
-    <script>
-        // Load posts cho EDU
-        document.addEventListener('DOMContentLoaded', function() {
-            loadPosts('edu');
-        });
-    </script>
+    <!-- Thay thế phần script cuối -->
+<script src="../js/script.js"></script>
+<script src="../js/data-manager.js"></script>
+<script>
+    // Load posts cho EDU sử dụng DataManager
+    document.addEventListener('DOMContentLoaded', async function() {
+        try {
+            const posts = await dataManager.getPostsByCategory('edu');
+            displayPosts(posts, 'edu');
+        } catch (error) {
+            console.error('Error loading EDU posts:', error);
+            displayError();
+        }
+    });
+
+    function displayPosts(posts, category) {
+        const container = document.getElementById('posts-container');
+        
+        if (posts.length === 0) {
+            container.innerHTML = `
+                <div class="post-item">
+                    <h3>Chưa có bài viết</h3>
+                    <p>Hiện tại chưa có bài viết nào trong danh mục ${getCategoryName(category)}.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        container.innerHTML = posts.map(post => `
+            <div class="post-item">
+                <h3>${post.title}</h3>
+                <div class="post-meta">
+                    📅 ${new Date(post.date).toLocaleDateString('vi-VN')} | 👤 ${post.author}
+                </div>
+                <div class="post-content">
+                    ${post.content.length > 300 ? post.content.substring(0, 300) + '...' : post.content}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function displayError() {
+        const container = document.getElementById('posts-container');
+        container.innerHTML = `
+            <div class="post-item">
+                <h3>⚠️ Không thể tải dữ liệu</h3>
+                <p>Vui lòng thử lại sau hoặc liên hệ admin.</p>
+            </div>
+        `;
+    }
+
+    function getCategoryName(category) {
+        const categories = {
+            'google-one': 'Google One',
+            'nigeria': 'Nigeria',
+            'edu': 'EDU', 
+            'the-ao': 'Thẻ ảo',
+            'vpn-proxy': 'VPN Proxy'
+        };
+        return categories[category] || category;
+    }
+</script>
+
 </body>
 </html>

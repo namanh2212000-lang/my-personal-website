@@ -58,6 +58,46 @@
             <!-- Manage Posts Section -->
             <section class="admin-section">
                 <h2>Quản lý bài viết</h2>
+                <section class="admin-section">
+    <h2>📤 Export & Download Dữ liệu</h2>
+    <div class="export-tools">
+        <div class="form-row">
+            <div class="form-group">
+                <label>📊 Thống kê hiện tại:</label>
+                <div id="stats-info" class="stats-box">
+                    <p>Đang tải thống kê...</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>🔄 Thao tác:</label>
+                <button onclick="refreshStats()" class="btn-primary">🔄 Làm mới</button>
+                <button onclick="exportServerData()" class="btn-primary">📁 Download JSON</button>
+                <button onclick="previewData()" class="btn-primary">👁️ Preview Data</button>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="exportPreview">📋 Preview dữ liệu JSON:</label>
+            <textarea id="exportPreview" rows="10" readonly 
+                placeholder="Click 'Preview Data' để xem dữ liệu sẽ được export..."></textarea>
+        </div>
+        
+        <div class="instructions">
+            <h4>📖 Hướng dẫn sử dụng:</h4>
+            <ol>
+                <li><strong>Thêm bài viết:</strong> Sử dụng form ở trên để thêm bài viết mới</li>
+                <li><strong>Download JSON:</strong> Click "Download JSON" để tải file <code>posts.json</code></li>
+                <li><strong>Upload lên server:</strong> 
+                    <ul>
+                        <li>Upload file <code>posts.json</code> vào thư mục <code>/var/www/website/data/</code></li>
+                        <li>Hoặc copy nội dung vào file <code>data/posts.json</code> trong VS Code</li>
+                    </ul>
+                </li>
+                <li><strong>Deploy:</strong> Git push và chạy update script trên VPS</li>
+            </ol>
+        </div>
+    </div>
+</section>
                 <div id="posts-list">
                     <table class="posts-table">
                         <thead>
